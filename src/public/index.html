@@ -407,10 +407,19 @@
       <div class="card-title">📄 Input Document</div>
 
       <div class="samples-row">
-        <span class="samples-label">Load a sample →</span>
-        <button class="btn btn-ghost" id="btn-sample-contract">Contract</button>
-        <button class="btn btn-ghost" id="btn-sample-chat">Chat Log</button>
-        <button class="btn btn-ghost" id="btn-sample-ticket">Support Ticket</button>
+        <span class="samples-label">Contracts</span>
+        <button class="btn btn-ghost" id="btn-sample-contract-1">Sample 1 (Clean)</button>
+        <button class="btn btn-ghost" id="btn-sample-contract-2">Sample 2 (Messy)</button>
+      </div>
+      <div class="samples-row">
+        <span class="samples-label">Chat Logs</span>
+        <button class="btn btn-ghost" id="btn-sample-chat-1">Sample 1 (Formal)</button>
+        <button class="btn btn-ghost" id="btn-sample-chat-2">Sample 2 (Informal)</button>
+      </div>
+      <div class="samples-row">
+        <span class="samples-label">Support Tickets</span>
+        <button class="btn btn-ghost" id="btn-sample-ticket-1">Sample 1 (Billing)</button>
+        <button class="btn btn-ghost" id="btn-sample-ticket-2">Sample 2 (App Crash)</button>
       </div>
 
       <div class="form-row">
@@ -502,7 +511,9 @@
 // ── Sample Documents ────────────────────────────────────────────────────────
 
 const SAMPLES = {
-  contract: `CONSULTING SERVICES AGREEMENT
+  contract_1: {
+    type: 'contract',
+    text: `CONSULTING SERVICES AGREEMENT
 
 This Agreement is entered into as of May 10, 2024, between:
 
@@ -541,9 +552,36 @@ DISPUTE RESOLUTION: Binding arbitration in Boston, MA
 
 Signed:
   Dr. Rebecca Lane, Managing Director, Pinnacle Strategy Group (May 8, 2024)
-  Michael Chen, VP Operations, NovaTech Robotics (May 9, 2024)`,
+  Michael Chen, VP Operations, NovaTech Robotics (May 9, 2024)`
+  },
 
-  chat_log: `=== Customer Support Chat Transcript ===
+  contract_2: {
+    type: 'contract',
+    text: `NDA AGREEMENT - DRAFT v3
+
+This Agreement made betwen Sunrise Logistics Pvt Ltd ("Disclosing Party") and
+Marcus Webb, independent contractor ("Receiving Party") dated March 3rd 2025.
+
+Purpose: Receiving Party engaged for warehouse mgmt consulting, term of 6 months
+starting immediately.
+
+Confidentiality obligations apply to all technical and business info shared during
+engagement. Receiving party agrees not to disclose to any third party for a period
+of 2 years post-termination.
+
+Compensation: $45/hr, invoiced monthly. Payment due net-15.
+
+[contact info to be added later - Marcus to send]
+
+Governing law: State of Delaware.
+
+Signed,
+Sunrise Logistics Pvt Ltd`
+  },
+
+  chat_log_1: {
+    type: 'chat_log',
+    text: `=== Customer Support Chat Transcript ===
 Channel: Live Chat | Session ID: CS-2024-8847
 Date: June 15, 2024
 
@@ -577,9 +615,27 @@ Date: June 15, 2024
 
 --- Session ended by customer ---
 Satisfaction Rating: 5/5
-Resolution Time: 7 minutes`,
+Resolution Time: 7 minutes`
+  },
 
-  support_ticket: `SUPPORT TICKET #TK-2024-15782
+  chat_log_2: {
+    type: 'chat_log',
+    text: `[10:02] alex_w: hii i ordered smth last week and it still says processing??
+[10:02] alex_w: order #88213
+[10:04] support_maya: Hi Alex! Let me check that for you one sec
+[10:05] support_maya: I can see it left the warehouse yesterday, tracking should
+update in 24-48hrs
+[10:05] alex_w: ok but i paid for express shipping???
+[10:06] support_maya: You're right, I see that too - I'm escalating this and
+issuing a partial refund for the shipping difference
+[10:06] alex_w: thank u!! how long for refund
+[10:07] support_maya: 3-5 business days back to your original payment method
+[10:07] alex_w: perfect thanks maya`
+  },
+
+  support_ticket_1: {
+    type: 'support_ticket',
+    text: `SUPPORT TICKET #TK-2024-15782
 
 Created: 2024-07-08 09:15:00 UTC
 Status: Resolved
@@ -621,13 +677,33 @@ Config migration script did not preserve custom rate limits set before v4.0. Nee
 
 Resolved: 2024-07-08 14:45:00 UTC
 Resolution Time: 5 hours 30 minutes`
+  },
+
+  support_ticket_2: {
+    type: 'support_ticket',
+    text: `Ticket #TK-55291
+Subject: App crashes on login after update
+Priority: High
+Reported by: j.tanaka@fieldcorp.io
+Created: 2025-06-14T08:12:00Z
+
+Description:
+Since updating to v4.2.1 this morning, the mobile app crashes immediately after
+entering login credentials. Happens on both wifi and cellular. Tried reinstalling,
+same issue. Using iPhone 13, iOS 17.4. Colleague on Android says it works fine for
+them. Need this fixed ASAP, entire field team is locked out.
+
+Status: Open
+Category: Bug - Authentication`
+  }
 };
 
 // ── Load Sample ─────────────────────────────────────────────────────────────
 
-function loadSample(type, event) {
-  document.getElementById('docType').value = type;
-  document.getElementById('docText').value = SAMPLES[type];
+function loadSample(sampleId, event) {
+  const sample = SAMPLES[sampleId];
+  document.getElementById('docType').value = sample.type;
+  document.getElementById('docText').value = sample.text;
 
   // Highlight active sample button
   document.querySelectorAll('.samples-row .btn-ghost').forEach(btn => btn.classList.remove('active'));
@@ -746,9 +822,14 @@ function escapeHtml(str) {
 
 // ── Event Listeners ─────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('btn-sample-contract').addEventListener('click', (e) => loadSample('contract', e));
-  document.getElementById('btn-sample-chat').addEventListener('click', (e) => loadSample('chat_log', e));
-  document.getElementById('btn-sample-ticket').addEventListener('click', (e) => loadSample('support_ticket', e));
+  document.getElementById('btn-sample-contract-1').addEventListener('click', (e) => loadSample('contract_1', e));
+  document.getElementById('btn-sample-contract-2').addEventListener('click', (e) => loadSample('contract_2', e));
+  
+  document.getElementById('btn-sample-chat-1').addEventListener('click', (e) => loadSample('chat_log_1', e));
+  document.getElementById('btn-sample-chat-2').addEventListener('click', (e) => loadSample('chat_log_2', e));
+  
+  document.getElementById('btn-sample-ticket-1').addEventListener('click', (e) => loadSample('support_ticket_1', e));
+  document.getElementById('btn-sample-ticket-2').addEventListener('click', (e) => loadSample('support_ticket_2', e));
   
   document.getElementById('extractBtn').addEventListener('click', runExtraction);
   document.getElementById('btnClear').addEventListener('click', clearAll);
