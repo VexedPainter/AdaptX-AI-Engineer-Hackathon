@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Constrained Structured Extraction at Scale</title>
+  <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -407,9 +408,9 @@
 
       <div class="samples-row">
         <span class="samples-label">Load a sample →</span>
-        <button class="btn btn-ghost" onclick="loadSample('contract')">Contract</button>
-        <button class="btn btn-ghost" onclick="loadSample('chat_log')">Chat Log</button>
-        <button class="btn btn-ghost" onclick="loadSample('support_ticket')">Support Ticket</button>
+        <button class="btn btn-ghost" id="btn-sample-contract">Contract</button>
+        <button class="btn btn-ghost" id="btn-sample-chat">Chat Log</button>
+        <button class="btn btn-ghost" id="btn-sample-ticket">Support Ticket</button>
       </div>
 
       <div class="form-row">
@@ -429,10 +430,10 @@
       </div>
 
       <div class="actions-row">
-        <button class="btn btn-primary" id="extractBtn" onclick="runExtraction()">
+        <button class="btn btn-primary" id="extractBtn">
           ⚡ Extract Structured Data
         </button>
-        <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+        <button class="btn btn-ghost" id="btnClear">Clear</button>
       </div>
     </div>
 
@@ -624,7 +625,7 @@ Resolution Time: 5 hours 30 minutes`
 
 // ── Load Sample ─────────────────────────────────────────────────────────────
 
-function loadSample(type) {
+function loadSample(type, event) {
   document.getElementById('docType').value = type;
   document.getElementById('docText').value = SAMPLES[type];
 
@@ -742,6 +743,16 @@ function syntaxHighlight(json) {
 function escapeHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
+
+// ── Event Listeners ─────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btn-sample-contract').addEventListener('click', (e) => loadSample('contract', e));
+  document.getElementById('btn-sample-chat').addEventListener('click', (e) => loadSample('chat_log', e));
+  document.getElementById('btn-sample-ticket').addEventListener('click', (e) => loadSample('support_ticket', e));
+  
+  document.getElementById('extractBtn').addEventListener('click', runExtraction);
+  document.getElementById('btnClear').addEventListener('click', clearAll);
+});
 </script>
 </body>
 </html>
