@@ -66,7 +66,7 @@ PERSONALITY: You are methodical, precise, and conservative. When uncertain about
 
 RULES:
 1. Output ONLY a valid JSON object matching the provided schema — no markdown, no explanation, no preamble
-2. Every required field must be present; use reasonable defaults only when the schema specifies them
+2. If a required field is genuinely missing from the source text, DO NOT invent or hallucinate data to satisfy the schema. You MUST omit it, even if this causes schema validation errors.
 3. For optional fields: include them ONLY if the source text contains clear evidence
 4. Array fields should contain all items found in the text, even if formatting is inconsistent
 5. Dates should be extracted as-is from the text (e.g., "March 15, 2024" or "2024-03-15")
@@ -183,7 +183,9 @@ ${previousOutput}
 These validation errors must be fixed:
 ${errorTrace}
 
-Please output a corrected JSON object that fixes ALL of the above errors. Output ONLY the JSON — no explanation.`;
+Please output a corrected JSON object. 
+CRITICAL RULE: If a validation error is caused by data that is GENUINELY MISSING from the source text, DO NOT invent or hallucinate data just to fix the error. It is better to fail validation than to hallucinate. If the data is missing, leave the field omitted.
+Output ONLY the JSON — no explanation.`;
 
   return {
     ...originalPrompt,
