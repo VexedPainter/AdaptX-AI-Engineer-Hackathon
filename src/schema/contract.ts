@@ -10,7 +10,7 @@ import { z } from 'zod';
 
 /** Schema for a party to a contract (buyer, seller, etc.) */
 export const ContractPartySchema = z.object({
-  name: z.string().describe('Full legal name of the party'),
+  name: z.string().min(1, 'Party name is required').describe('Full legal name of the party'),
   role: z.enum(['buyer', 'seller', 'licensor', 'licensee', 'provider', 'client', 'other'])
     .describe('Role of this party in the contract'),
   address: z.string().optional().describe('Mailing or registered address'),
@@ -38,19 +38,19 @@ export const ContractClauseSchema = z.object({
     'force_majeure', 'dispute_resolution', 'intellectual_property', 'non_compete',
     'warranty', 'amendment', 'governing_law', 'assignment', 'other'
   ]).describe('Type of legal clause'),
-  summary: z.string().describe('Brief summary of the clause in plain language'),
+  summary: z.string().min(1, 'Clause summary is required').describe('Brief summary of the clause in plain language'),
   noticePeriodDays: z.number().optional().describe('Notice period in days, if applicable'),
   jurisdiction: z.string().optional().describe('Governing jurisdiction for this clause'),
 });
 
 /** Top-level contract extraction schema */
 export const ContractSchema = z.object({
-  contractTitle: z.string().describe('Title or name of the contract'),
+  contractTitle: z.string().min(1, 'Contract title is required').describe('Title or name of the contract'),
   contractType: z.enum([
     'service_agreement', 'license_agreement', 'nda', 'employment',
     'lease', 'purchase_order', 'partnership', 'consulting', 'other'
   ]).describe('Type of contract'),
-  effectiveDate: z.string().describe('Date the contract takes effect (ISO 8601 or descriptive)'),
+  effectiveDate: z.string().min(1, 'Effective date is required').describe('Date the contract takes effect (ISO 8601 or descriptive)'),
   expirationDate: z.string().optional().describe('Contract end date if applicable'),
   autoRenewal: z.boolean().describe('Whether the contract auto-renews'),
   parties: z.array(ContractPartySchema).min(1).describe('Parties involved in the contract'),

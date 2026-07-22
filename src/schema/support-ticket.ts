@@ -10,7 +10,7 @@ import { z } from 'zod';
 
 /** Schema for the customer who filed the ticket */
 export const TicketCustomerSchema = z.object({
-  name: z.string().describe('Customer name'),
+  name: z.string().min(1, 'Customer name is required').describe('Customer name'),
   email: z.string().email().optional().describe('Customer email address'),
   accountId: z.string().optional().describe('Customer account or organization ID'),
   tier: z.enum(['free', 'basic', 'premium', 'enterprise', 'unknown']).default('unknown')
@@ -19,7 +19,7 @@ export const TicketCustomerSchema = z.object({
 
 /** Schema for a product/service referenced in the ticket */
 export const ProductReferenceSchema = z.object({
-  productName: z.string().describe('Name of the product or service'),
+  productName: z.string().min(1, 'Product name is required').describe('Name of the product or service'),
   version: z.string().optional().describe('Version or SKU if mentioned'),
   component: z.string().optional().describe('Specific component or feature involved'),
 });
@@ -27,7 +27,7 @@ export const ProductReferenceSchema = z.object({
 /** Schema for a resolution step taken */
 export const ResolutionStepSchema = z.object({
   stepNumber: z.number().int().describe('Order of this step in the resolution process'),
-  action: z.string().describe('What action was taken'),
+  action: z.string().min(1, 'Action description is required').describe('What action was taken'),
   performedBy: z.string().optional().describe('Who performed this action'),
   timestamp: z.string().optional().describe('When this step was taken'),
   outcome: z.string().optional().describe('Result of this action'),
@@ -43,8 +43,8 @@ export const SlaInfoSchema = z.object({
 
 /** Top-level support ticket extraction schema */
 export const SupportTicketSchema = z.object({
-  ticketId: z.string().describe('Unique ticket identifier'),
-  subject: z.string().describe('Ticket subject line'),
+  ticketId: z.string().min(1, 'Ticket ID is required').describe('Unique ticket identifier'),
+  subject: z.string().min(1, 'Subject is required').describe('Ticket subject line'),
   category: z.enum([
     'bug_report', 'feature_request', 'billing', 'account_access',
     'performance', 'integration', 'documentation', 'security', 'other'
@@ -53,12 +53,12 @@ export const SupportTicketSchema = z.object({
     .describe('Priority level of the ticket'),
   status: z.enum(['open', 'in_progress', 'waiting_on_customer', 'resolved', 'closed', 'escalated'])
     .describe('Current status of the ticket'),
-  createdAt: z.string().describe('When the ticket was created (ISO 8601 or descriptive)'),
+  createdAt: z.string().min(1, 'Creation date is required').describe('When the ticket was created (ISO 8601 or descriptive)'),
   resolvedAt: z.string().optional().describe('When the ticket was resolved'),
   customer: TicketCustomerSchema.describe('Customer who filed the ticket'),
   assignedAgent: z.string().optional().describe('Support agent assigned to the ticket'),
   product: ProductReferenceSchema.optional().describe('Product/service referenced'),
-  problemDescription: z.string().describe('Detailed description of the problem'),
+  problemDescription: z.string().min(1, 'Problem description is required').describe('Detailed description of the problem'),
   rootCause: z.string().optional().describe('Identified root cause'),
   resolutionSteps: z.array(ResolutionStepSchema).describe('Steps taken to resolve the issue'),
   resolution: z.string().optional().describe('Final resolution summary'),
