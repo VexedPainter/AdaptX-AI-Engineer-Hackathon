@@ -1,17 +1,17 @@
 # Constrained Structured Extraction - Evaluation Report
 
-*Generated: 2026-07-22T08:59:22.501Z*
-*Mode: DEMO SUBSET (20 docs)*
+*Generated: 2026-07-22T09:28:22.710Z*
+*Mode: FULL (50 docs)*
 
 ## Executive Summary
 
-- **Total Documents Processed**: 20
-- **Schema-Valid Outputs**: 19
-- **Success Rate**: **95.0%**
-- **Average Latency**: 51.08s (p95)
-- **Average Retries**: 0.85 per document
-- **Average Cost**: $0.0006 per document
-- **Total Evaluation Time**: 501.1s
+- **Total Documents Processed**: 50
+- **Schema-Valid Outputs**: 47
+- **Success Rate**: **94.0%**
+- **Average Latency**: 67.52s (p95)
+- **Average Retries**: 1.34 per document
+- **Average Cost**: $0.0009 per document
+- **Total Evaluation Time**: 1508.0s
 
 ## Provider Strategy
 
@@ -26,18 +26,17 @@
 
 | Type | Total | Valid | Success Rate |
 |---|---|---|---|
-| contract | 8 | 7 | 87.5% |
-| chat_log | 6 | 6 | 100.0% |
-| support_ticket | 6 | 6 | 100.0% |
+| contract | 20 | 17 | 85.0% |
+| chat_log | 15 | 15 | 100.0% |
+| support_ticket | 15 | 15 | 100.0% |
 
 ## Failure Analysis
 
 Distribution of failures across the pipeline:
 
-- **wrong_type**: 57 occurrences
-- **rate_limit**: 1 occurrences
-- **merge_conflict**: 6 occurrences
-- **missing_field**: 11 occurrences
+- **wrong_type**: 251 occurrences
+- **missing_field**: 62 occurrences
+- **merge_conflict**: 63 occurrences
 
 > **Note:** These counts reflect failures encountered during *intermediate retry attempts* across the pipeline, not final document outcomes. Every failure listed here was either corrected by the retry loop or, in cases where the underlying data was genuinely absent from the source text, resulted in a document being correctly flagged rather than passed with fabricated data. The success rate above reflects final validated outcomes after the retry process completes.
 
@@ -45,23 +44,61 @@ Distribution of failures across the pipeline:
 
 ### ❌ Failed Extractions
 
-#### Document: `7b87d13b-acc9-468b-8ccf-34c1f47db977` (contract)
+#### Document: `a1c4da79-dc72-46a6-8232-a51db331ffa9` (contract)
 - **Retries Exhausted**: 3
 - **Errors**:
-  - [validation] wrong_type: Validation failed at path "parties.0.role": Invalid enum value. Expected 'buyer' | 'seller' | 'licensor' | 'licensee' | 'provider' | 'client' | 'other', received 'landlord'
-  - [validation] wrong_type: Validation failed at path "parties.1.role": Invalid enum value. Expected 'buyer' | 'seller' | 'licensor' | 'licensee' | 'provider' | 'client' | 'other', received 'tenant'
-  - [validation] wrong_type: Validation failed at path "totalContractValue": Expected number, received null
-  - [validation] wrong_type: Validation failed at path "parties.0.role": Invalid enum value. Expected 'buyer' | 'seller' | 'licensor' | 'licensee' | 'provider' | 'client' | 'other', received 'landlord'
-  - [validation] wrong_type: Validation failed at path "parties.1.role": Invalid enum value. Expected 'buyer' | 'seller' | 'licensor' | 'licensee' | 'provider' | 'client' | 'other', received 'tenant'
-  - [validation] wrong_type: Validation failed at path "parties.0.role": Invalid enum value. Expected 'buyer' | 'seller' | 'licensor' | 'licensee' | 'provider' | 'client' | 'other', received 'landlord'
-  - [validation] wrong_type: Validation failed at path "parties.1.role": Invalid enum value. Expected 'buyer' | 'seller' | 'licensor' | 'licensee' | 'provider' | 'client' | 'other', received 'tenant'
-  - [validation] wrong_type: Validation failed at path "totalContractValue": Expected number, received null
-  - [validation] wrong_type: Validation failed at path "paymentTerms.0.latePenaltyPercent": Expected number, received null
+  - [validation] wrong_type: Validation failed at path "expirationDate": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.0.address": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.0.contactPhone": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.1.address": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.0.address": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.0.contactPhone": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.1.address": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.0.address": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.0.contactPhone": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.1.address": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.0.address": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.0.contactPhone": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.1.address": Expected string, received null
+
+#### Document: `c0ea9de8-336a-45ca-a629-5870ea15440f` (contract)
+- **Retries Exhausted**: 3
+- **Errors**:
+  - [validation] wrong_type: Validation failed at path "parties.0.contactPhone": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "paymentTerms.1.amount": Expected number, received null
+  - [validation] wrong_type: Validation failed at path "paymentTerms.2.amount": Expected number, received null
+  - [validation] missing_field: Validation failed at path "paymentTerms.2.amount": Required
+  - [validation] wrong_type: Validation failed at path "paymentTerms.1.amount": Expected number, received null
+  - [validation] wrong_type: Validation failed at path "paymentTerms.2.amount": Expected number, received null
+  - [validation] missing_field: Validation failed at path "paymentTerms.1.amount": Required
+  - [validation] missing_field: Validation failed at path "paymentTerms.2.amount": Required
+
+#### Document: `97d1a005-07bc-4bdf-aa03-fa7821d465a7` (contract)
+- **Retries Exhausted**: 3
+- **Errors**:
+  - [validation] wrong_type: Validation failed at path "expirationDate": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.0.role": Invalid enum value. Expected 'buyer' | 'seller' | 'licensor' | 'licensee' | 'provider' | 'client' | 'other', received 'controller'
+  - [validation] wrong_type: Validation failed at path "parties.1.role": Invalid enum value. Expected 'buyer' | 'seller' | 'licensor' | 'licensee' | 'provider' | 'client' | 'other', received 'processor'
+  - [validation] wrong_type: Validation failed at path "clauses.2.clauseType": Invalid enum value. Expected 'termination' | 'confidentiality' | 'indemnification' | 'liability_limitation' | 'force_majeure' | 'dispute_resolution' | 'intellectual_property' | 'non_compete' | 'warranty' | 'amendment' | 'governing_law' | 'assignment' | 'other', received 'data_breach_notification'
+  - [validation] wrong_type: Validation failed at path "clauses.3.clauseType": Invalid enum value. Expected 'termination' | 'confidentiality' | 'indemnification' | 'liability_limitation' | 'force_majeure' | 'dispute_resolution' | 'intellectual_property' | 'non_compete' | 'warranty' | 'amendment' | 'governing_law' | 'assignment' | 'other', received 'data_retention'
+  - [validation] wrong_type: Validation failed at path "clauses.4.clauseType": Invalid enum value. Expected 'termination' | 'confidentiality' | 'indemnification' | 'liability_limitation' | 'force_majeure' | 'dispute_resolution' | 'intellectual_property' | 'non_compete' | 'warranty' | 'amendment' | 'governing_law' | 'assignment' | 'other', received 'data_deletion'
+  - [validation] wrong_type: Validation failed at path "parties.0.role": Invalid enum value. Expected 'buyer' | 'seller' | 'licensor' | 'licensee' | 'provider' | 'client' | 'other', received 'controller'
+  - [validation] wrong_type: Validation failed at path "parties.1.role": Invalid enum value. Expected 'buyer' | 'seller' | 'licensor' | 'licensee' | 'provider' | 'client' | 'other', received 'processor'
+  - [validation] wrong_type: Validation failed at path "clauses.2.clauseType": Invalid enum value. Expected 'termination' | 'confidentiality' | 'indemnification' | 'liability_limitation' | 'force_majeure' | 'dispute_resolution' | 'intellectual_property' | 'non_compete' | 'warranty' | 'amendment' | 'governing_law' | 'assignment' | 'other', received 'data_breach_notification'
+  - [validation] wrong_type: Validation failed at path "clauses.3.clauseType": Invalid enum value. Expected 'termination' | 'confidentiality' | 'indemnification' | 'liability_limitation' | 'force_majeure' | 'dispute_resolution' | 'intellectual_property' | 'non_compete' | 'warranty' | 'amendment' | 'governing_law' | 'assignment' | 'other', received 'data_retention'
+  - [validation] wrong_type: Validation failed at path "clauses.4.clauseType": Invalid enum value. Expected 'termination' | 'confidentiality' | 'indemnification' | 'liability_limitation' | 'force_majeure' | 'dispute_resolution' | 'intellectual_property' | 'non_compete' | 'warranty' | 'amendment' | 'governing_law' | 'assignment' | 'other', received 'data_deletion'
+  - [validation] wrong_type: Validation failed at path "expirationDate": Expected string, received null
+  - [validation] wrong_type: Validation failed at path "parties.0.role": Invalid enum value. Expected 'buyer' | 'seller' | 'licensor' | 'licensee' | 'provider' | 'client' | 'other', received 'controller'
+  - [validation] wrong_type: Validation failed at path "parties.1.role": Invalid enum value. Expected 'buyer' | 'seller' | 'licensor' | 'licensee' | 'provider' | 'client' | 'other', received 'processor'
+  - [validation] wrong_type: Validation failed at path "clauses.2.clauseType": Invalid enum value. Expected 'termination' | 'confidentiality' | 'indemnification' | 'liability_limitation' | 'force_majeure' | 'dispute_resolution' | 'intellectual_property' | 'non_compete' | 'warranty' | 'amendment' | 'governing_law' | 'assignment' | 'other', received 'data_breach_notification'
+  - [validation] wrong_type: Validation failed at path "clauses.3.clauseType": Invalid enum value. Expected 'termination' | 'confidentiality' | 'indemnification' | 'liability_limitation' | 'force_majeure' | 'dispute_resolution' | 'intellectual_property' | 'non_compete' | 'warranty' | 'amendment' | 'governing_law' | 'assignment' | 'other', received 'data_retention'
+  - [validation] wrong_type: Validation failed at path "clauses.4.clauseType": Invalid enum value. Expected 'termination' | 'confidentiality' | 'indemnification' | 'liability_limitation' | 'force_majeure' | 'dispute_resolution' | 'intellectual_property' | 'non_compete' | 'warranty' | 'amendment' | 'governing_law' | 'assignment' | 'other', received 'data_deletion'
+  - [validation] wrong_type: Validation failed at path "parties.1.contactPhone": Expected string, received null
 
 ### ✅ Sample Successful Extraction
 
-**Document**: `d27121ac-3069-438e-b5a0-f4e4c64b0400` (contract)
-**Latency**: 16833ms | **Retries**: 1 | **Tokens**: 8285
+**Document**: `7dea582b-97db-488c-b942-7f52d931f0f2` (contract)
+**Latency**: 28801ms | **Retries**: 1 | **Tokens**: 8276
 
 **Extracted JSON**:
 ```json
@@ -93,21 +130,21 @@ Distribution of failures across the pipeline:
       "currency": "USD",
       "frequency": "upon_delivery",
       "latePenaltyPercent": 1.5,
-      "notes": "Phase 1 (Design) payment due upon signing"
+      "notes": "Phase 1 (Design): due upon signing"
     },
     {
       "amount": 120000,
       "currency": "USD",
       "frequency": "milestone",
       "latePenaltyPercent": 1.5,
-      "notes": "Phase 2 (Development) payment due at milestone completion"
+      "notes": "Phase 2 (Development): due at milestone completion"
     },
     {
       "amount": 60000,
       "currency": "USD",
       "frequency": "upon_delivery",
       "latePenaltyPercent": 1.5,
-      "notes": "Phase 3 (Testing & Launch) payment due upon final delivery"
+      "notes": "Phase 3 (Testing & Launch): due upon final delivery"
     }
   ],
   "clauses": [
@@ -143,7 +180,7 @@ Distribution of failures across the pipeline:
 
 ## Failure Modes and Mitigation Strategies
 
-This section documents the distinct failure modes observed during evaluation of the extraction pipeline across 20 synthetic documents spanning contracts, chat logs, and support tickets. For each failure mode, we describe what was observed, why it occurred, and the mitigation strategy implemented or recommended.
+This section documents the distinct failure modes observed during evaluation of the extraction pipeline across 50 synthetic documents spanning contracts, chat logs, and support tickets. For each failure mode, we describe what was observed, why it occurred, and the mitigation strategy implemented or recommended.
 
 ### 1. Required Fields Returned as Null Despite Schema Constraints
 
