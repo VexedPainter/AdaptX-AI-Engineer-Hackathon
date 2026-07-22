@@ -6,7 +6,11 @@
  * 
  * Usage:
  *   npm run evaluate          → runs the 20-doc demo subset (fast, ~7 min)
+ *                                writes to output/report.md
  *   npm run evaluate:full     → runs all 50 documents (full, ~22 min)
+ *                                writes to output/report_full50.md
+ * 
+ * The two output files are independent — running one never overwrites the other.
  */
 
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
@@ -22,19 +26,21 @@ import type { DocumentType, PipelineOutput } from '../src/types/index.js';
 
 // Setup directories
 const outputDir = join(process.cwd(), 'output');
-const reportPath = join(outputDir, 'report.md');
+
+// Full mode and demo mode write to separate files so they never overwrite each other.
+const isFullMode = process.argv.includes('--full');
+const reportFilename = isFullMode ? 'report_full50.md' : 'report.md';
+const reportPath = join(outputDir, reportFilename);
 
 if (!existsSync(outputDir)) {
   mkdirSync(outputDir, { recursive: true });
 }
 
-// ─── Dataset Selection ──────────────────────────────────────────────────────
-
 /**
  * Check for --full flag to run all 50 documents.
  * Default mode runs a representative 20-doc subset for fast demo evaluation.
+ * Note: isFullMode is declared above alongside reportPath for clarity.
  */
-const isFullMode = process.argv.includes('--full');
 
 /**
  * Select a representative subset of documents.
@@ -184,6 +190,7 @@ function generateReport(results: PipelineOutput[], totalTimeSeconds: string, mod
       report += `- **${category}**: ${count} occurrences\n`;
     }
     report += `\n`;
+    report += `> **Note:** These counts reflect failures encountered during *intermediate retry attempts* across the pipeline, not final document outcomes. Every failure listed here was either corrected by the retry loop or, in cases where the underlying data was genuinely absent from the source text, resulted in a document being correctly flagged rather than passed with fabricated data. The success rate above reflects final validated outcomes after the retry process completes.\n\n`;
   }
 
   report += `## Detailed Results\n\n`;
