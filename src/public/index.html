@@ -811,7 +811,8 @@ async function runExtraction() {
 
   try {
     // 1. Play the terminal boot sequence matching actual architecture
-    await typeLine('> SYSTEM ONLINE. USER: RAHUL J. // AGE: 19 // LOC: BLR. // SYS_MEM: 42.4% // INITIATING COGNITIVE PROTOCOLS...', 600);
+    await typeLine('$ npm run start-extraction -- --mode=production', 400);
+    await typeLine('> [INFO] INITIATING COGNITIVE PROTOCOLS...', 500);
     await typeLine('> INGESTING DOCUMENT...', 500);
     await typeLine('> NORMALIZING & CHUNKING TEXT...', 500);
     await typeLine('> RETRIEVING FEW-SHOT EXAMPLES (QDRANT)...', 600);
