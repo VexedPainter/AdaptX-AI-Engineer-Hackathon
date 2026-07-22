@@ -466,16 +466,19 @@
         <span class="samples-label">Contracts</span>
         <button class="btn btn-ghost" id="btn-sample-contract-1">Sample 1 (Clean)</button>
         <button class="btn btn-ghost" id="btn-sample-contract-2">Sample 2 (Messy)</button>
+        <button class="btn btn-ghost" id="btn-sample-contract-3">Sample 3 (Edge Case)</button>
       </div>
       <div class="samples-row">
         <span class="samples-label">Chat Logs</span>
         <button class="btn btn-ghost" id="btn-sample-chat-1">Sample 1 (Formal)</button>
         <button class="btn btn-ghost" id="btn-sample-chat-2">Sample 2 (Informal)</button>
+        <button class="btn btn-ghost" id="btn-sample-chat-3">Sample 3 (Edge Case)</button>
       </div>
       <div class="samples-row">
         <span class="samples-label">Support Tickets</span>
         <button class="btn btn-ghost" id="btn-sample-ticket-1">Sample 1 (Billing)</button>
         <button class="btn btn-ghost" id="btn-sample-ticket-2">Sample 2 (App Crash)</button>
+        <button class="btn btn-ghost" id="btn-sample-ticket-3">Sample 3 (Edge Case)</button>
       </div>
 
       <div class="form-row">
@@ -751,6 +754,48 @@ them. Need this fixed ASAP, entire field team is locked out.
 
 Status: Open
 Category: Bug - Authentication`
+  },
+
+  contract_3: {
+    type: 'contract',
+    text: `CONSULTING ENGAGEMENT LETTER
+
+This letter confirms the engagement of Priya Nair Consulting ("Consultant") by
+Bright Path Media LLC ("Client") to provide brand strategy advisory services,
+effective upon signature.
+
+Scope: Consultant will provide up to 15 hours per month of strategic consulting,
+including brand positioning workshops and quarterly reviews.
+
+Term: This engagement continues on a month-to-month basis until terminated by
+either party with 15 days written notice.
+
+Confidentiality: Both parties agree to keep all shared business information
+confidential during and after the engagement.
+
+Governing Law: This agreement is governed by the laws of the State of New York.
+
+Signed,
+Bright Path Media LLC
+
+[Note: payment/compensation details to be finalized in a separate fee schedule
+document, not yet attached]`
+  },
+
+  chat_log_3: {
+    type: 'chat_log',
+    text: `[14:22] user_47: hey is anyone there
+[14:23] user_47: my account got locked and idk why
+[14:25] user_47: hello??
+[14:31] user_47: ok guess nobody's around, i'll try again later`
+  },
+
+  support_ticket_3: {
+    type: 'support_ticket',
+    text: `Subject: something's broken again
+
+the thing i mentioned last time is still happening. can someone please look into
+this when you get a chance. not sure who else to tell.`
   }
 };
 
@@ -824,7 +869,6 @@ async function runExtraction() {
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 
     if (data.error) throw new Error(data.error);
-    if (!data.success && !data.data) throw new Error("Validation Failed on Backend");
 
     // Extract REAL provider name from API response
     const providerName = (data.providersUsed && data.providersUsed.length > 0) 
@@ -833,7 +877,12 @@ async function runExtraction() {
 
     await typeLine(`> EXTRACTING VIA ${providerName}...`, 800);
     await typeLine('> VALIDATING SCHEMA...', 500);
-    await typeLine('> SCHEMA VALIDATED ✓', 600);
+    
+    if (data.success) {
+      await typeLine('> SCHEMA VALIDATED ✓', 600);
+    } else {
+      await typeLine('> SCHEMA VALIDATION FAILED ✗', 600);
+    }
 
     // 2. Build and reveal the actual metrics and JSON panel
     let html = '<div class="result-meta" style="animation: fadeIn 0.5s ease;">';
@@ -863,14 +912,23 @@ async function runExtraction() {
 
     html += '</div>';
 
-    const displayData = data.success ? data.data : data;
+    if (!data.success && data.failures && data.failures.length > 0) {
+      html += `<div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; padding: 10px 15px; margin-bottom: 15px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 0.82rem; color: #fca5a5;">
+        <strong>Validation Errors:</strong>
+        <ul style="margin-top: 5px; padding-left: 20px;">
+          ${data.failures.map(f => `<li>${escapeHtml(typeof f === 'string' ? f : f.message || JSON.stringify(f))}</li>`).join('')}
+        </ul>
+      </div>`;
+    }
+
+    const displayData = data.success ? data.data : (data.data || { info: "No data extracted due to validation failure" });
     html += `<div class="result-json" style="animation: fadeIn 0.5s ease;">${syntaxHighlight(JSON.stringify(displayData, null, 2))}</div>`;
 
     panel.innerHTML = html;
 
   } catch (err) {
     panel.innerHTML =
-      `<div class="result-meta"><span class="meta-chip error">✗ Network Error</span></div>` +
+      `<div class="result-meta"><span class="meta-chip error">✗ Terminal Interrupted</span></div>` +
       `<div class="result-json">${escapeHtml(err.message)}</div>`;
   } finally {
     btn.disabled = false;
@@ -914,12 +972,15 @@ function escapeHtml(str) {
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-sample-contract-1').addEventListener('click', (e) => loadSample('contract_1', e));
   document.getElementById('btn-sample-contract-2').addEventListener('click', (e) => loadSample('contract_2', e));
+  document.getElementById('btn-sample-contract-3').addEventListener('click', (e) => loadSample('contract_3', e));
   
   document.getElementById('btn-sample-chat-1').addEventListener('click', (e) => loadSample('chat_log_1', e));
   document.getElementById('btn-sample-chat-2').addEventListener('click', (e) => loadSample('chat_log_2', e));
+  document.getElementById('btn-sample-chat-3').addEventListener('click', (e) => loadSample('chat_log_3', e));
   
   document.getElementById('btn-sample-ticket-1').addEventListener('click', (e) => loadSample('support_ticket_1', e));
   document.getElementById('btn-sample-ticket-2').addEventListener('click', (e) => loadSample('support_ticket_2', e));
+  document.getElementById('btn-sample-ticket-3').addEventListener('click', (e) => loadSample('support_ticket_3', e));
   
   document.getElementById('btnClear').addEventListener('click', clearAll);
   document.getElementById('extractBtn').addEventListener('click', runExtraction);
