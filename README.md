@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=22&pause=1000&color=6366F1&center=true&vCenter=true&multiline=true&repeat=true&width=700&height=80&lines=%F0%9F%A7%AC+10-Stage+AI+Extraction+Pipeline;%F0%9F%8F%86+100%25+Schema+Validity+%7C+Zero+Regex;%E2%9A%A1+4-Tier+LLM+Fallback+%7C+AES-256+Encrypted" alt="Typing SVG" /></a>
+<a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=22&pause=1000&color=6366F1&center=true&vCenter=true&multiline=true&repeat=true&width=700&height=120&lines=%F0%9F%A7%AC+10-Stage+AI+Extraction+Pipeline;%F0%9F%8F%86+100%25+Schema+Validity+%7C+Zero+Regex;%E2%9A%A1+4-Tier+LLM+Fallback+%7C+AES-256+Encrypted" alt="Typing SVG" /></a>
 
 <br/>
 
