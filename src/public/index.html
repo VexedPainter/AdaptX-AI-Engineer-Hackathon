@@ -12,23 +12,23 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg-primary: #0a0a0f;
-      --bg-secondary: #12121a;
-      --bg-card: #16161f;
-      --bg-input: #1a1a25;
-      --border: #2a2a3a;
-      --border-focus: #6366f1;
-      --text-primary: #e8e8ed;
-      --text-secondary: #8b8b9e;
-      --text-muted: #5a5a6e;
-      --accent: #6366f1;
-      --accent-glow: rgba(99, 102, 241, 0.25);
-      --success: #22c55e;
-      --success-bg: rgba(34, 197, 94, 0.1);
+      --bg-primary: #000000;
+      --bg-secondary: #0a0a0a;
+      --bg-card: rgba(20, 20, 25, 0.6);
+      --bg-input: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.1);
+      --border-focus: rgba(255, 255, 255, 0.3);
+      --text-primary: #f5f5f7;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --accent: #ffffff;
+      --accent-glow: rgba(255, 255, 255, 0.1);
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.1);
       --error: #ef4444;
       --error-bg: rgba(239, 68, 68, 0.1);
       --warning: #f59e0b;
-      --radius: 12px;
+      --radius: 16px;
       --radius-sm: 8px;
     }
 
@@ -38,14 +38,15 @@
       color: var(--text-primary);
       min-height: 100vh;
       line-height: 1.6;
+      background-image: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
     }
 
     /* ── Header ──────────────────────────── */
     .header {
-      padding: 2rem 2rem 1.5rem;
+      padding: 3rem 2rem 2rem;
       text-align: center;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(99,102,241,0.06) 0%, transparent 100%);
+      background: transparent;
     }
     .header-badge {
       display: inline-flex;
@@ -53,24 +54,27 @@
       gap: 6px;
       padding: 4px 14px;
       border-radius: 20px;
-      background: var(--accent-glow);
-      border: 1px solid rgba(99,102,241,0.3);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       font-size: 0.75rem;
       font-weight: 600;
-      color: var(--accent);
+      color: var(--text-secondary);
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      margin-bottom: 0.75rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+    .header-badge:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
     }
     .header-badge::before { content: "⚡"; }
     .header h1 {
-      font-size: 1.75rem;
+      font-size: 2.25rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #e8e8ed 30%, #6366f1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 0.35rem;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
     }
     .header p {
       color: var(--text-secondary);
@@ -93,17 +97,24 @@
     /* ── Cards ────────────────────────────── */
     .card {
       background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1.25rem;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 40px -10px rgba(255, 255, 255, 0.05);
     }
     .card-title {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 600;
       color: var(--text-secondary);
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 1rem;
+      letter-spacing: 1px;
+      margin-bottom: 1.25rem;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -132,12 +143,13 @@
       font-family: inherit;
       font-size: 0.88rem;
       padding: 0.6rem 0.75rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: all 0.3s ease;
       outline: none;
     }
     select:focus, textarea:focus {
       border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px var(--accent-glow);
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
     }
     textarea {
       font-family: 'JetBrains Mono', monospace;
@@ -159,18 +171,19 @@
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       border: 1px solid transparent;
     }
     .btn-primary {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      border-color: var(--text-primary);
     }
     .btn-primary:hover:not(:disabled) {
-      background: #5558e6;
-      box-shadow: 0 4px 20px var(--accent-glow);
-      transform: translateY(-1px);
+      background: transparent;
+      color: var(--text-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
     }
     .btn-primary:disabled {
       opacity: 0.5;
@@ -184,14 +197,15 @@
       font-size: 0.78rem;
     }
     .btn-ghost:hover {
-      background: var(--bg-input);
+      background: rgba(255, 255, 255, 0.05);
       color: var(--text-primary);
-      border-color: var(--text-muted);
+      border-color: var(--text-primary);
+      transform: translateY(-2px);
     }
     .btn-ghost.active {
-      background: var(--accent-glow);
-      color: var(--accent);
-      border-color: rgba(99,102,241,0.3);
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      border-color: var(--text-primary);
     }
 
     .actions-row {
@@ -303,25 +317,25 @@
       gap: 0.75rem;
     }
     .stat-item {
-      background: var(--bg-input);
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 0.75rem;
+      padding: 1rem;
       text-align: center;
+      transition: all 0.3s ease;
+    }
+    .stat-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.2);
     }
     .stat-value {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       font-weight: 800;
-      background: linear-gradient(135deg, var(--accent), #a78bfa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--text-primary);
     }
     .stat-value.green {
-      background: linear-gradient(135deg, var(--success), #4ade80);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #34d399;
     }
     .stat-label {
       font-size: 0.7rem;
@@ -343,16 +357,21 @@
       padding: 0.5rem 0;
     }
     .stage-pill {
-      padding: 3px 10px;
-      border-radius: 12px;
+      padding: 4px 12px;
+      border-radius: 20px;
       font-size: 0.65rem;
       font-weight: 600;
-      color: var(--text-muted);
-      background: var(--bg-input);
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border);
       text-transform: uppercase;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.5px;
       white-space: nowrap;
+      transition: all 0.3s ease;
+    }
+    .stage-pill:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: var(--text-primary);
     }
     .stage-arrow { color: var(--text-muted); font-size: 0.65rem; }
 
@@ -392,7 +411,7 @@
       <span class="stage-pill">Retrieval</span><span class="stage-arrow">→</span>
       <span class="stage-pill">Prompt Assembly</span><span class="stage-arrow">→</span>
       <span class="stage-pill">Pre-Guard</span><span class="stage-arrow">→</span>
-      <span class="stage-pill" style="border-color:var(--accent);color:var(--accent);">LLM Extraction</span><span class="stage-arrow">→</span>
+      <span class="stage-pill" style="border-color:var(--text-primary);color:var(--text-primary);background:rgba(255,255,255,0.08);">LLM Extraction</span><span class="stage-arrow">→</span>
       <span class="stage-pill">Post-Guard</span><span class="stage-arrow">→</span>
       <span class="stage-pill">Validation</span><span class="stage-arrow">→</span>
       <span class="stage-pill">Output Store</span>
