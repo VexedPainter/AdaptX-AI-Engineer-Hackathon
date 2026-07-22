@@ -631,7 +631,7 @@ npm start        # Runs dist/gateway/server.js
 
 <div align="center">
 
-Built for the **AdaptX AI Engineer Hackathon** by **AntiGravity**
+Built for the **AdaptX AI Engineer Hackathon** by **Sai Suriyha JK**
 
 <br/>
 
