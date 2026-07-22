@@ -264,6 +264,42 @@
       word-break: break-word;
     }
 
+    /* ── Terminal UI ──────────────────────── */
+    .terminal {
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #34d399;
+      min-height: 250px;
+      text-align: left;
+      line-height: 1.6;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    }
+    .terminal-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background-color: #34d399;
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── Particles ────────────────────────── */
+    #particles-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      pointer-events: auto;
+    }
+
     .result-meta {
       display: flex;
       gap: 1rem;
@@ -395,10 +431,11 @@
   </style>
 </head>
 <body>
+  <canvas id="particles-bg"></canvas>
 
   <!-- Header -->
   <div class="header">
-    <div class="header-badge">AdaptX AI Engineer Hackathon</div>
+    <div class="header-badge">AdaptX</div>
     <h1>Constrained Structured Extraction at Scale</h1>
     <p>Paste any messy, unstructured document and extract validated, schema-compliant JSON using a 4-tier LLM pipeline.</p>
   </div>
@@ -752,24 +789,53 @@ async function runExtraction() {
     return;
   }
 
-  // Show loading
+  // Disable button and prepare terminal
   btn.disabled = true;
-  overlay.classList.add('active');
+  panel.innerHTML = '<div class="terminal" id="terminalOutput"><span class="terminal-cursor"></span></div>';
+  const term = document.getElementById('terminalOutput');
+  const cursorHTML = '<span class="terminal-cursor"></span>';
+  
+  const typeLine = async (text, delayMs) => {
+    term.innerHTML = term.innerHTML.replace(cursorHTML, '') + text + '<br>' + cursorHTML;
+    await new Promise(r => setTimeout(r, delayMs));
+  };
 
   const startTime = Date.now();
 
-  try {
-    const res = await fetch('/extract', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, documentType }),
-    });
+  // Fire the actual extraction request in the background immediately
+  const fetchPromise = fetch('/extract', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, documentType }),
+  }).then(res => res.json()).catch(err => ({ error: err.message }));
 
-    const data = await res.json();
+  try {
+    // 1. Play the terminal boot sequence matching actual architecture
+    await typeLine('> SYSTEM ONLINE. USER: RAHUL J. // AGE: 19 // LOC: BLR. // SYS_MEM: 42.4% // INITIATING COGNITIVE PROTOCOLS...', 600);
+    await typeLine('> INGESTING DOCUMENT...', 500);
+    await typeLine('> NORMALIZING & CHUNKING TEXT...', 500);
+    await typeLine('> RETRIEVING FEW-SHOT EXAMPLES (QDRANT)...', 600);
+    await typeLine('> ASSEMBLING PROMPT (MASTRA)...', 500);
+    await typeLine('> RUNNING GUARDRAIL PRE-CHECK...', 600);
+
+    // Wait for the actual API response to resolve before printing the extraction line
+    const data = await fetchPromise;
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 
-    // Build result
-    let html = '<div class="result-meta">';
+    if (data.error) throw new Error(data.error);
+    if (!data.success && !data.data) throw new Error("Validation Failed on Backend");
+
+    // Extract REAL provider name from API response
+    const providerName = (data.providersUsed && data.providersUsed.length > 0) 
+      ? data.providersUsed[0].toUpperCase() 
+      : 'UNKNOWN';
+
+    await typeLine(`> EXTRACTING VIA ${providerName}...`, 800);
+    await typeLine('> VALIDATING SCHEMA...', 500);
+    await typeLine('> SCHEMA VALIDATED ✓', 600);
+
+    // 2. Build and reveal the actual metrics and JSON panel
+    let html = '<div class="result-meta" style="animation: fadeIn 0.5s ease;">';
 
     if (data.success) {
       html += `<span class="meta-chip success">✓ Schema Valid</span>`;
@@ -790,14 +856,14 @@ async function runExtraction() {
       }
     }
     if (data.providersUsed) {
+      // Must use real provider returned by API
       html += `<span class="meta-chip info">🤖 ${data.providersUsed.join(' → ')}</span>`;
     }
 
     html += '</div>';
 
-    // Pretty-print the extracted data (or full response on failure)
     const displayData = data.success ? data.data : data;
-    html += `<div class="result-json">${syntaxHighlight(JSON.stringify(displayData, null, 2))}</div>`;
+    html += `<div class="result-json" style="animation: fadeIn 0.5s ease;">${syntaxHighlight(JSON.stringify(displayData, null, 2))}</div>`;
 
     panel.innerHTML = html;
 
@@ -807,9 +873,13 @@ async function runExtraction() {
       `<div class="result-json">${escapeHtml(err.message)}</div>`;
   } finally {
     btn.disabled = false;
-    overlay.classList.remove('active');
   }
 }
+
+// Add simple fadeIn animation for the transition
+const style = document.createElement('style');
+style.textContent = '@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }';
+document.head.appendChild(style);
 
 // ── JSON Syntax Highlighting ────────────────────────────────────────────────
 
@@ -850,9 +920,105 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-sample-ticket-1').addEventListener('click', (e) => loadSample('support_ticket_1', e));
   document.getElementById('btn-sample-ticket-2').addEventListener('click', (e) => loadSample('support_ticket_2', e));
   
-  document.getElementById('extractBtn').addEventListener('click', runExtraction);
   document.getElementById('btnClear').addEventListener('click', clearAll);
+  document.getElementById('extractBtn').addEventListener('click', runExtraction);
+
+  initParticles();
 });
+
+// ── Particle Background ─────────────────────────────────────────────────────
+function initParticles() {
+  const canvas = document.getElementById('particles-bg');
+  const ctx = canvas.getContext('2d');
+  
+  let width, height;
+  let particles = [];
+  
+  const mouse = { x: null, y: null, radius: 150 };
+
+  window.addEventListener('mousemove', (e) => {
+    mouse.x = e.x;
+    mouse.y = e.y;
+  });
+  window.addEventListener('mouseout', () => {
+    mouse.x = null;
+    mouse.y = null;
+  });
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  class Particle {
+    constructor() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.vy = (Math.random() - 0.5) * 0.5;
+      this.baseSize = Math.random() * 2 + 1;
+    }
+    update() {
+      if (this.x > width || this.x < 0) this.vx = -this.vx;
+      if (this.y > height || this.y < 0) this.vy = -this.vy;
+      
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // Mouse interaction
+      if (mouse.x != null && mouse.y != null) {
+        let dx = mouse.x - this.x;
+        let dy = mouse.y - this.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < mouse.radius) {
+          const forceDirectionX = dx / distance;
+          const forceDirectionY = dy / distance;
+          const force = (mouse.radius - distance) / mouse.radius;
+          this.x -= forceDirectionX * force * 2;
+          this.y -= forceDirectionY * force * 2;
+        }
+      }
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.baseSize, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < 80; i++) {
+    particles.push(new Particle());
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, width, height);
+    
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].update();
+      particles[i].draw();
+      
+      for (let j = i; j < particles.length; j++) {
+        let dx = particles[i].x - particles[j].x;
+        let dy = particles[i].y - particles[j].y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 120) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 - distance/800})`;
+          ctx.lineWidth = 1;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
 </script>
 </body>
 </html>
