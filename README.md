@@ -285,7 +285,8 @@ graph TB
 
 </div>
 
-> 📝 Full evaluation report with failure analysis: [`output/report.md`](output/report.md)
+> 📝 Full 20-Doc demo evaluation report: [`output/report.md`](output/report.md)
+> 📝 Full 50-Doc official evaluation report (with clarified intermediate retry logs): [`output/report_full50.md`](output/report_full50.md)
 
 <img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0d1117&height=1"/>
 
@@ -297,10 +298,10 @@ graph TB
 <tr>
 <td>
 
-The web interface provides a complete interactive demo:
+The web interface provides a complete interactive demo featuring a **sleek minimalist black aesthetic** with glassmorphism and subtle animations:
 
 **1.** Select a document type — `Contract` / `Chat Log` / `Support Ticket`<br/>
-**2.** Load a pre-built sample — or paste your own messy text<br/>
+**2.** Load one of the **6 built-in synthetic samples** — or paste your own messy text<br/>
 **3.** Click **"⚡ Extract Structured Data"** — watch the pipeline process it<br/>
 **4.** View syntax-highlighted JSON — with live metrics (latency, tokens, cost)
 
@@ -468,7 +469,8 @@ curl -X POST http://localhost:3000/extract \
 │   ├── evaluate.ts               # Evaluation harness (20-doc / 50-doc)
 │   └── seed-qdrant.ts            # Vector store seeding
 ├── 📚 docs/                      # PRD, Prompts, Security, Observability
-├── 📈 output/report.md           # Latest evaluation report
+├── 📈 output/report.md           # 20-doc demo evaluation report
+├── 📈 output/report_full50.md    # 50-doc official evaluation report
 ├── ☁️ DEPLOY.md                   # Railway/Render deployment guide
 └── 📦 package.json
 ```
