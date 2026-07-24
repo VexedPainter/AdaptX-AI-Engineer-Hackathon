@@ -11,7 +11,7 @@
 - **Average Latency**: 51.08s (p95)
 - **Average Retries**: 0.85 per document
 - **Average Cost**: $0.0006 per document
-- **Total Evaluation Time**: 501.1s
+- **Total Evaluation Time**: 501.1s (~8.4 minutes)
 
 ## Provider Strategy
 
