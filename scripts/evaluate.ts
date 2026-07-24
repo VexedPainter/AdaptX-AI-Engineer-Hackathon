@@ -187,7 +187,8 @@ function generateReport(results: PipelineOutput[], totalTimeSeconds: string, mod
   report += `- **Average Latency**: ${(metrics.p95LatencyMs / 1000).toFixed(2)}s (p95)\n`;
   report += `- **Average Retries**: ${metrics.avgRetriesPerRecord.toFixed(2)} per document\n`;
   report += `- **Average Cost**: $${metrics.avgCostPerRecord.toFixed(4)} per document\n`;
-  report += `- **Total Evaluation Time**: ${totalTimeSeconds}s\n\n`;
+  const minutes = (parseFloat(totalTimeSeconds) / 60).toFixed(1);
+  report += `- **Total Evaluation Time**: ${totalTimeSeconds}s (~${minutes} minutes)\n\n`;
 
   report += `## Provider Strategy\n\n`;
   report += `> The extraction engine uses a 4-tier LLM fallback chain:\n`;
