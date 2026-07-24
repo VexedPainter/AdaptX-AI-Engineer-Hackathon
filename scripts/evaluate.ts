@@ -27,9 +27,25 @@ import type { DocumentType, PipelineOutput } from '../src/types/index.js';
 // Setup directories
 const outputDir = join(process.cwd(), 'output');
 
-// Full mode and demo mode write to separate files so they never overwrite each other.
+// Determine run mode based on flags
 const isFullMode = process.argv.includes('--full');
-const reportFilename = isFullMode ? 'report_full50.md' : 'report.md';
+const is40Mode = process.argv.includes('--40');
+const is30Mode = process.argv.includes('--30');
+
+let reportFilename = 'report.md';
+let runModeLabel = 'DEMO SUBSET (20 docs)';
+
+if (isFullMode) {
+  reportFilename = 'report_full50.md';
+  runModeLabel = 'FULL (50 docs)';
+} else if (is40Mode) {
+  reportFilename = 'report_40.md';
+  runModeLabel = 'SUBSET (40 docs)';
+} else if (is30Mode) {
+  reportFilename = 'report_30.md';
+  runModeLabel = 'SUBSET (30 docs)';
+}
+
 const reportPath = join(outputDir, reportFilename);
 
 if (!existsSync(outputDir)) {
@@ -37,27 +53,35 @@ if (!existsSync(outputDir)) {
 }
 
 /**
- * Check for --full flag to run all 50 documents.
- * Default mode runs a representative 20-doc subset for fast demo evaluation.
- * Note: isFullMode is declared above alongside reportPath for clarity.
+ * Select a subset of documents based on the mode.
  */
-
-/**
- * Select a representative subset of documents.
- * Picks the first N documents from each type to keep results comparable
- * to the full 50-doc evaluation (same documents, same order).
- */
-function selectDemoSubset() {
-  return {
-    contracts: contractSamples.slice(0, 8),      // 8 of 20
-    chatLogs: chatLogSamples.slice(0, 6),         // 6 of 15
-    supportTickets: supportTicketSamples.slice(0, 6), // 6 of 15
-  };
+function selectSubset() {
+  if (isFullMode) {
+    return null; // Signals to use all documents
+  } else if (is40Mode) {
+    return {
+      contracts: contractSamples.slice(0, 16),
+      chatLogs: chatLogSamples.slice(0, 12),
+      supportTickets: supportTicketSamples.slice(0, 12),
+    };
+  } else if (is30Mode) {
+    return {
+      contracts: contractSamples.slice(0, 12),
+      chatLogs: chatLogSamples.slice(0, 9),
+      supportTickets: supportTicketSamples.slice(0, 9),
+    };
+  } else {
+    // 20-doc demo
+    return {
+      contracts: contractSamples.slice(0, 8),
+      chatLogs: chatLogSamples.slice(0, 6),
+      supportTickets: supportTicketSamples.slice(0, 6),
+    };
+  }
 }
 
 async function runEvaluation() {
-  const mode = isFullMode ? 'FULL (50 docs)' : 'DEMO SUBSET (20 docs)';
-  console.log(`🚀 Starting Constrained Extraction Pipeline Evaluation [${mode}]...\n`);
+  console.log(`🚀 Starting Constrained Extraction Pipeline Evaluation [${runModeLabel}]...\n`);
   const globalStartTime = Date.now();
 
   if (!config.GEMINI_API_KEY && !config.GROQ_API_KEY && !config.MISTRAL_API_KEY) {
@@ -93,7 +117,7 @@ async function runEvaluation() {
     selectedChatLogs = chatLogSamples;
     selectedTickets = supportTicketSamples;
   } else {
-    const subset = selectDemoSubset();
+    const subset = selectSubset()!;
     selectedContracts = subset.contracts;
     selectedChatLogs = subset.chatLogs;
     selectedTickets = subset.supportTickets;
@@ -145,7 +169,7 @@ async function runEvaluation() {
   const totalTimeSeconds = ((Date.now() - globalStartTime) / 1000).toFixed(1);
   console.log(`\n⏱️ Total Execution Time: ${totalTimeSeconds} seconds`);
   console.log('\n📊 Generating evaluation report...');
-  generateReport(results, totalTimeSeconds, mode);
+  generateReport(results, totalTimeSeconds, runModeLabel);
   console.log(`✅ Evaluation complete. Report saved to ${reportPath}`);
 }
 
